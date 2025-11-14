@@ -1,7 +1,7 @@
 tibtle2pcap
 ===========
 
-Convert TI SmartRF Bluetooth Low Energy Packet Captures to Libpcap Format
+Convert TI SmartRF Bluetooth Low Energy Packet Captures to Libpcap Format (for Python 3)
 
 HEAD
 
@@ -27,26 +27,7 @@ C:\>python tibtle2pcap.py fitbit-smartrf.psd out.pcap
 
 The capture file "fitbit-smartrf.psd" is included with this software as an example.
 
+DOTO
 
-BUGS
-
-+ Timestamp information is not present in the output libpcap file.
-+ The PPI header does not include important characteristics such as channel,
-  RSSI, etc.  This information is available, but the PPI header format doesn't
-  accommodate for link layer information outside of 802.11.  The libpcap-workers
-  list (with Mike Ryan's assistance) is working on rectifying this.  I'll update
-  at some point in the future.
-
-
-THANKS
-
-Many thanks to Mike Ryan for blazing the path forward to open up Bluetooth LE
-sniffing and traffic analysis.
-
-The PcapDump class is borrowed from the KillerBee project. I wrote it
-initially, then Ryan Speers and Ricky Melgares made it better.  I stole it here
-so as not to have to deal with dependencies.
-
-
-Joshua Wright, 2014-03-03 
-jwright@hasborg.com
++ find proper values for DLT (DLT_USER, btle) and Head size in wireshark setting.
++ or, proper settings.
