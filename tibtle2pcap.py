@@ -15,9 +15,6 @@
 # sniffing and traffic analysis.
 # Joshua Wright, 2014-03-03 
 
-# Updated for Python 3
-# Donggeun Kwon, 2025-11-14  
-
 import struct
 import sys
 import pcapdump
@@ -65,8 +62,8 @@ for packet in packets:
 	# Based on my analysis of the TI Packet Sniffer savefile, we can get these
 	# additional values too.  When the PPI format is updated to accommodate non-802.11
 	# types, we can add them.
-	rssi = data[-3] # ord(data[-3:-2])
-	exflags = data[-2] # ord(data[-2:-1])
+	rssi = ord(data[-3:-2])
+	exflags = ord(data[-2:-1])
 	channel = exflags & 0x7f
 	fcsok = (exflags & 0x80 > 0)
 	
