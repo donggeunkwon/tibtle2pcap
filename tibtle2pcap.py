@@ -15,11 +15,15 @@
 # sniffing and traffic analysis.
 # Joshua Wright, 2014-03-03 
 
+# Updated for Python 3
+# Donggeun Kwon, 2025-11-14  
+
 import struct
 import sys
 import pcapdump
-TIRECLEN=271
-DLT_PPI=192
+
+TIRECLEN = 271
+DLT_PPI = 147 #192
 
 def chan2mhz(chan):
 	chanmap = {
@@ -30,11 +34,11 @@ def chan2mhz(chan):
 		34:2474, 35:2476, 36:2478, 39:2480 }
 	try:
 		return chanmap[chan]
-	except IndexError:
+	except KeyError:
 		return 0
 
 if len(sys.argv) < 3:
-	print "tibtle2pcap.py [TI psd file] [pcapfile]"
+	print("tibtle2pcap.py [TI psd file] [pcapfile]")
 	sys.exit(1)
 
 capfile = open(sys.argv[1], "rb")
@@ -44,25 +48,32 @@ capfile.close()
 pd = pcapdump.PcapDumper(DLT_PPI, sys.argv[2])
 
 # Chunk packet content into generator
-packets=(capturedata[i:i+TIRECLEN] for i in xrange(0, len(capturedata), TIRECLEN))
+packets=(capturedata[i:i+TIRECLEN] for i in range(0, len(capturedata), TIRECLEN))
 
 for packet in packets:
-	(pinfo, pnum, pts, plen) = struct.unpack('<cidh',packet[0:15])
-	if pinfo != "\x01": continue 	# Bit 0 format is all we can handle
+
+	(pinfo, pnum, pts, plen) = struct.unpack('<cidh', packet[0:15])
+
+	if pinfo != b"\x01": 
+		continue 	# Bit 0 format is all we can handle
+
 	data = packet[16:16+plen]
+	# if len(data) < 3: continue
+
 	payload = data[0:-3]
 
 	# Based on my analysis of the TI Packet Sniffer savefile, we can get these
 	# additional values too.  When the PPI format is updated to accommodate non-802.11
 	# types, we can add them.
-	rssi = ord(data[-3:-2])
-	exflags = ord(data[-2:-1])
-	channel=exflags&0x7f
-	fcsok=(exflags&0x80 > 0)
+	rssi = data[-3] # ord(data[-3:-2])
+	exflags = data[-2] # ord(data[-2:-1])
+	channel = exflags & 0x7f
+	fcsok = (exflags & 0x80 > 0)
 	
-	#print "Packet",pnum,"RSSI",rssi,"Channel",channel,"FCSOK",fcsok
-	#hexdump.hexdump(payload)
+	print("Packet",pnum," | RSSI",rssi," | Channel",channel," | FCSOK",fcsok)
+
 	# This hideoous string is a PPI header with DLT_USER specified so we can use
 	# the btle plugin with Wireshark.
-	pd.pcap_dump("\x00\x00\x08\x00\x93\x00\x00\x00" + payload)
-print
+	ppi_prefix = b"\x00\x00\x08\x00\x93\x00\x00\x00"
+	pd.pcap_dump(ppi_prefix + payload)
+print('END')
