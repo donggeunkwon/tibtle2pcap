@@ -36,10 +36,10 @@ This guide explains how to configure Wireshark to correctly parse `.pcap` files 
 
 ### Configuration Steps
 
-1.  In Wireshark, click `Edit` > `Preferences...`.
+1.  In Wireshark, click `Edit` > `Preferences`.
 2.  In the 'Preferences' window, expand the `Protocols` section from the list on the left.
 3.  Scroll down and select `DLT_USER` from the protocol list.
-4.  On the right side, find the row for **`User 0 (DLT=147)`**.
+4.  Find the row for **`User 0 (DLT=147)`**, or add it.
 5.  Set the values for this row exactly as follows:
     * **Payload dissector:** `btle`
     * **Header size:** `8`
